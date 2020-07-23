@@ -1,0 +1,42 @@
+{
+  "name": "Hiven",
+  "version": "1.0.0",
+  "description": "Hiven Desktop App From Can",
+  "devDependencies": {
+    "electron": "^9.1.1",
+    "electron-builder": "^22.7.0"
+  },
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ./src/main.js",
+    "deploy": "electron-builder --win --linux --publish always"
+  },
+  "author": {
+    "name": "Cancodes",
+    "email": "c4navar.publicmail@gmail.com",
+    "url": "https://github.com/cancodes"
+  },
+  "license": "ISC",
+  "homepage": "https://canary.hiven.io",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/CanCodes/Hiven-Dekstop-Builds.git"
+  },
+  "build": {
+    "linux": {
+      "target": "deb",
+      "executableName": "Hiven Canary",
+      "icon": "./src/assets",
+      "category": "Utility"
+    },
+    "win": {
+        "target": "portable",
+        "icon": "./src/assets"
+    },
+    "directories": {
+      "buildResources": "./src/assets"
+    }
+
+  }
+}
