@@ -7,11 +7,17 @@ function build() {
         height: 720,
         center: true,
         resizable: true,
-        //icon: path.join(__dirname + "/assets/96x96.png"),
         webPreferences: {
             devTools: true
         }
     });
+    win.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
+    win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
+        return true
+    })
+    win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
+        callback(true)
+    })
     win.loadURL("https://canary.hiven.io");
     win.setAutoHideMenuBar(true);
     win.webContents.on("did-finish-load", () => {
