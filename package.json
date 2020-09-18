@@ -1,6 +1,6 @@
 {
   "name": "Hiven",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Hiven Desktop App From Can",
   "devDependencies": {
     "electron": "^9.1.1",
@@ -20,23 +20,28 @@
   "license": "ISC",
   "homepage": "https://canary.hiven.io",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/CanCodes/Hiven-Dekstop-Builds.git"
+    "type": "git",
+    "url": "https://github.com/CanCodes/Hiven-Dekstop-Builds.git"
   },
   "build": {
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "executableName": "Hiven Canary",
       "icon": "./src/assets",
       "category": "Utility"
     },
     "win": {
-        "target": "portable",
-        "icon": "./src/assets"
+      "target": "portable",
+      "icon": "./src/assets"
     },
     "directories": {
       "buildResources": "./src/assets"
     }
-
+  },
+  "dependencies": {
+    "electron-debug": "^3.1.0"
   }
 }

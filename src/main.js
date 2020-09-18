@@ -1,5 +1,8 @@
 const {BrowserWindow, app} = require("electron");
 const path = require("path")
+const debug = require('electron-debug');
+
+debug({showDevTools: false});
 
 function build() {
     const win = new BrowserWindow({
@@ -8,7 +11,8 @@ function build() {
         center: true,
         resizable: true,
         webPreferences: {
-            devTools: true
+            devTools: true,
+            menubar:false
         }
     });
     win.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
@@ -19,16 +23,9 @@ function build() {
         callback(true)
     })
     win.loadURL("https://canary.hiven.io");
-    win.setAutoHideMenuBar(true);
-    win.webContents.on("did-finish-load", () => {
-        if (process.platform !== "darwin") {
-            win.webContents.sendInputEvent({type: "keyDown", keyCode: "alt"});
-            win.webContents.sendInputEvent({type: "keyUp", keyCode: "alt"});
-        } else {
-            win.webContents.sendInputEvent({type: "keyDown", keyCode: "control"});
-            win.webContents.sendInputEvent({type: "keyUp", keyCode: "control"});
-        }
-    })
+
+    // win.setAutoHideMenuBar(true);
+    win.setMenu(null)
     win.webContents.on('new-window', function(e, url) {
       e.preventDefault();
       require('electron').shell.openExternal(url);
