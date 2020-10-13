@@ -1,6 +1,6 @@
 {
   "name": "Hiven",
-  "version": "1.0.2",
+  "version": "1.1.3",
   "description": "Hiven Desktop App From Can",
   "devDependencies": {
     "electron": "^9.1.1",
@@ -29,7 +29,7 @@
         "AppImage",
         "deb"
       ],
-      "executableName": "Hiven Canary",
+      "executableName": "Hiven-Canary",
       "icon": "./src/assets",
       "category": "Utility"
     },
@@ -42,6 +42,7 @@
     }
   },
   "dependencies": {
-    "electron-debug": "^3.1.0"
+    "electron-debug": "^3.1.0",
+    "update-electron-app": "^2.0.1"
   }
 }

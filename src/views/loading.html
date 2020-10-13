@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Loading Screen</title>
+</head>
+<style>
+    * {
+        color: white;
+        overflow-y:hidden;
+    }
+    body {
+        background-color: #242424;
+    }
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 400px;
+    }
+
+    @keyframes logoanim {
+        from {width: 56px; height: 56px;}
+        to {width: 64px; height: 64px;}
+    }
+    .logo {
+        animation-name: logoanim;
+        animation-duration: 1s;
+        animation-delay: 0.5s;
+        animation-direction: alternate;
+        animation-iteration-count: infinite;
+        image-rendering: crisp-edges;
+    }
+</style>
+
+<body>
+    <div class="center">
+        <img class="logo" src="https://canary.hiven.io/static/media/logo.f7ff647e.svg">
+    </div>
+</body>
+<script> 
+    
+</script>
+</html>
