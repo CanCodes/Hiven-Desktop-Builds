@@ -9,7 +9,7 @@ const path = require("path");
 const debug = require('electron-debug');
 const request = require('request')
 
-// Disables errors dialogs on production. Comment this while debugging.
+// Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
     console.log(`${title}\n${content}`);
 };
