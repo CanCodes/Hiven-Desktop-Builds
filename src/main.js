@@ -8,14 +8,14 @@ const { BrowserWindow, app, dialog } = require("electron");
 const path = require("path");
 const debug = require('electron-debug');
 const request = require('request')
+debug({ showDevTools: false, isEnabled: true });
 
 // Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
     console.log(`${title}\n${content}`);
 };
 
-debug({ showDevTools: false, isEnabled: true });
-let loadingScreen;
+let loadingScreen; // This is here for diasbling the window later on.
 
 function createLoadingScreen() {
     loadingScreen = new BrowserWindow({
@@ -48,6 +48,12 @@ function createHivenClient() {
             devTools: true
         }
     });
+
+    // Loading Hiven
+    win.loadURL("https://canary.hiven.io");
+    win.setMenu(null)
+
+    // ScreenShare Feature
     win.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
     win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
         return true
@@ -55,13 +61,15 @@ function createHivenClient() {
     win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
         callback(true)
     })
-    win.loadURL("https://canary.hiven.io");
 
-    win.setMenu(null)
+    // Loading Screen Check and Disable
     win.webContents.on('did-finish-load', () => {
         loadingScreen.close();
+        win.show();
     })
-    win.show();
+
+
+    // Invite Link Check
     win.webContents.on('new-window', async function (e, url) {
         e.preventDefault();
         if (url.includes('hiven.house/') || url.includes('hiven.io/invites/')) {
@@ -85,6 +93,7 @@ function createHivenClient() {
     });
 }
 
+// First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
     createHivenClient();
