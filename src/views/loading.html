@@ -9,6 +9,7 @@
     * {
         color: white;
         overflow-y:hidden;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
     }
     body {
         background-color: #242424;
@@ -17,9 +18,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 400px;
+        height: 300px;
     }
-
+    h3 {
+        text-align: center;
+    }
     @keyframes logoanim {
         from {width: 56px; height: 56px;}
         to {width: 64px; height: 64px;}
@@ -38,8 +41,11 @@
     <div class="center">
         <img class="logo" src="https://canary.hiven.io/static/media/logo.f7ff647e.svg">
     </div>
+    <h3 id="update-text">Checking for Updates...</h3>
 </body>
 <script> 
-    
+    function updateText(text) {
+        document.getElementById('update-text').innerText = text;
+    }
 </script>
 </html>

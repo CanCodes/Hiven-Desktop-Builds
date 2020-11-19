@@ -8,6 +8,7 @@ const { BrowserWindow, app, dialog } = require("electron");
 const path = require("path");
 const debug = require('electron-debug');
 const request = require('request')
+const  {autoUpdater} = require("electron-updater");
 debug({ showDevTools: false, isEnabled: true });
 
 // Disables errors dialogs on production. Check console to Debug.
@@ -93,10 +94,24 @@ function createHivenClient() {
     });
 }
 
+autoUpdater.on('update-not-available', (info) => {
+    loadingScreen.webContents.executeJavaScript(`updateText('Loading Client...')`)
+    createHivenClient()
+})
+
+autoUpdater.on('download-progress', (progress) => {
+    loadingScreen.webContents.executeJavaScript(`updateText('Downloaded ${Math.floor(progress.percent)}%')`)
+})
+
+autoUpdater.on('update-downloaded', (info) => {
+    loadingScreen.webContents.executeJavaScript(`updateText('Installing version ${info.version}')`)
+    autoUpdater.quitAndInstall();
+})
+
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    createHivenClient();
+    autoUpdater.checkForUpdates()
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
     });
