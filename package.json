@@ -1,6 +1,6 @@
 {
   "name": "Hiven",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Hiven Desktop App From Can",
   "devDependencies": {
     "electron": "^11.0.1",

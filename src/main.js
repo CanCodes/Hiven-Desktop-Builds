@@ -50,10 +50,6 @@ function createHivenClient() {
         }
     });
 
-    // Loading Hiven
-    win.loadURL("https://canary.hiven.io");
-    win.setMenu(null)
-
     // ScreenShare Feature
     win.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
     win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
@@ -63,6 +59,11 @@ function createHivenClient() {
         callback(true)
     })
 
+    // Loading Hiven
+    win.loadURL("https://canary.hiven.io");
+    win.setMenu(null)
+
+    
     // Loading Screen Check and Disable
     win.webContents.on('did-finish-load', () => {
         loadingScreen.close();
