@@ -1,15 +1,12 @@
-/* TODO: 
-    Check for updates.
-    Add "checking for updates" to the start up screen.
-    
-*/
-
 const { BrowserWindow, app, dialog } = require("electron");
 const path = require("path");
 const debug = require('electron-debug');
+const appConfig = require('electron-settings');
 const request = require('request')
-const  {autoUpdater} = require("electron-updater");
+const {autoUpdater} = require("electron-updater");
 debug({ showDevTools: false, isEnabled: true });
+
+const winStateKeeper = require("./scripts/windowStateKeeper")
 
 // Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
@@ -28,7 +25,6 @@ function createLoadingScreen() {
     })
     loadingScreen.loadFile(path.join(__dirname, '/views/loading.html'))
     loadingScreen.setVisibleOnAllWorkspaces(true);
-    loadingScreen.setAlwaysOnTop(true, "floating", 1);
     loadingScreen.on('closed', () => {
         loadingScreen = null;
     })
@@ -38,15 +34,19 @@ function createLoadingScreen() {
 }
 
 
-function createHivenClient() {
+async function createHivenClient() {
+    let mainWinStateKeeper = new winStateKeeper("main"); // Loads windows size and place from the electron-settings.
+    winState = await mainWinStateKeeper.bounds() // Gets the bound data 
     const win = new BrowserWindow({
-        width: 1280,
-        height: 720,
+        width: winState.width,
+        height: winState.height,
         center: true,
         resizable: true,
+        darkTheme: true,
         show: false,
         webPreferences: {
-            devTools: true
+            devTools: true,
+            enableRemoteModule:true
         }
     });
 
@@ -63,7 +63,7 @@ function createHivenClient() {
     win.loadURL("https://canary.hiven.io");
     win.setMenu(null)
 
-    
+    await mainWinStateKeeper.track(win); // Track window size to save it.
     // Loading Screen Check and Disable
     win.webContents.on('did-finish-load', () => {
         loadingScreen.close();

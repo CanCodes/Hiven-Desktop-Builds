@@ -1,6 +1,6 @@
 {
   "name": "Hiven",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Hiven Desktop App From Can",
   "devDependencies": {
     "electron": "^11.0.1",
@@ -28,8 +28,7 @@
   "build": {
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        "AppImage"
       ],
       "executableName": "Hiven-Canary",
       "icon": "./src/assets",
@@ -37,7 +36,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "./src/assets"
+      "icon": "./src/assets/256x256.png"
     },
     "directories": {
       "buildResources": "./src/assets"
@@ -45,6 +44,7 @@
   },
   "dependencies": {
     "electron-debug": "^3.1.0",
+    "electron-settings": "^4.0.2",
     "electron-updater": "^4.3.5",
     "request": "^2.88.2"
   },
