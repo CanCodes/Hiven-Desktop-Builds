@@ -1,4 +1,4 @@
-const { BrowserWindow, app, dialog } = require("electron");
+const { BrowserWindow, app, dialog, ipcMain } = require("electron");
 const path = require("path");
 const debug = require('electron-debug');
 const appConfig = require('electron-settings');
@@ -13,7 +13,7 @@ dialog.showErrorBox = function (title, content) {
     console.log(`${title}\n${content}`);
 };
 
-let loadingScreen; // This is here for diasbling the window later on.
+let loadingScreen, hivenClient; // This is here for diasbling the window later on.
 
 function createLoadingScreen() {
     loadingScreen = new BrowserWindow({
@@ -36,20 +36,22 @@ function createLoadingScreen() {
 
 async function createHivenClient() {
     let mainWinStateKeeper = new winStateKeeper("main"); // Loads windows size and place from the electron-settings.
-    winState = await mainWinStateKeeper.bounds() // Gets the bound data 
+    winState = await mainWinStateKeeper.bounds() // Gets the bound data
     const win = new BrowserWindow({
         width: winState.width,
         height: winState.height,
         center: true,
         resizable: true,
         darkTheme: true,
+        frame: false,
         show: false,
         webPreferences: {
             devTools: true,
-            enableRemoteModule:true
+            enableRemoteModule:true,
+            nodeIntegration: true
         }
     });
-
+    hivenClient = win;
     // ScreenShare Feature
     win.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
     win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
@@ -109,6 +111,22 @@ autoUpdater.on('update-downloaded', (info) => {
     autoUpdater.quitAndInstall();
 })
 
+ipcMain.on("nativeLinkCommand", (_, name) => {
+    switch (name) {
+        case "close":
+            hivenClient.close();
+            break;
+
+        case "minimize":
+            hivenClient.minimize();
+            break;
+
+        case "maximize":
+            hivenClient.isMaximized() ? hivenClient.unmaximize() : hivenClient.maximize();
+            break;
+    }
+});
+
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
@@ -116,7 +134,6 @@ app.on("ready", () => {
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
     });
-
 });
 
 app.on("window-all-closed", () => {

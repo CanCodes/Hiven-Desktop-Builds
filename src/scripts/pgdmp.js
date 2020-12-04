@@ -1,3 +1,5 @@
+const { ipcRenderer } = require(  "electron");
+window["ipc"] = ipcRenderer;
 const style = `<style>
 .desktop-capturer-selection {
   position: fixed;
