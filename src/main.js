@@ -18,7 +18,10 @@ function createLoadingScreen() {
         height: 400,
         frame: false,
         transparent: true,
-        resizable: false
+        resizable: false,
+        webPreferences: {
+            devTools: false
+        }
     })
     loadingScreen.loadFile(path.join(__dirname, '/views/loading.html'))
     loadingScreen.setVisibleOnAllWorkspaces(true);
@@ -33,7 +36,7 @@ function createLoadingScreen() {
 
 async function createHivenClient() {
     let mainWinStateKeeper = new winStateKeeper("main"); // Loads windows size and place from the electron-settings.
-    winState = await mainWinStateKeeper.bounds() // Gets the bound data
+    let winState = await mainWinStateKeeper.bounds() // Gets the bound data
     hivenClient = new BrowserWindow({
         width: winState.width,
         height: winState.height,
@@ -107,7 +110,7 @@ autoUpdater.on('download-progress', (progress) => {
 })
 
 autoUpdater.on('update-downloaded', (info) => {
-    loadingScreen.webContents.executeJavaScript(`updateText('Installing version ${info.version}')`)
+    loadingScreen.webContents.executeJavaScript(`updateText('Installing version ${info.version}')`);
     autoUpdater.quitAndInstall();
 })
 
@@ -130,7 +133,7 @@ ipcMain.on("nativeLinkCommand", (_, name) => {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    autoUpdater.checkForUpdates()
+    autoUpdater.checkForUpdates();
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
     });
