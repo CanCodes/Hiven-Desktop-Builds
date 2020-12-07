@@ -8,6 +8,8 @@ debug({ showDevTools: false, isEnabled: true });
 
 const winStateKeeper = require("./scripts/windowStateKeeper")
 
+app.disableHardwareAcceleration(); // Users were experiencing some freezes due to gpu rendering requiring more resources to run. 
+
 // Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
     console.log(`${title}\n${content}`);
@@ -37,7 +39,7 @@ function createLoadingScreen() {
 async function createHivenClient() {
     let mainWinStateKeeper = new winStateKeeper("main"); // Loads windows size and place from the electron-settings.
     winState = await mainWinStateKeeper.bounds() // Gets the bound data
-    const win = new BrowserWindow({
+    hivenClient = new BrowserWindow({
         width: winState.width,
         height: winState.height,
         center: true,
@@ -51,33 +53,32 @@ async function createHivenClient() {
             nodeIntegration: true
         }
     });
-    hivenClient = win;
     // ScreenShare Feature
-    win.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
-    win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
+    hivenClient.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
+    hivenClient.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
         return true
     })
-    win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
+    hivenClient.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
         callback(true)
     })
 
     // Loading Hiven
-    win.loadURL("https://canary.hiven.io");
-    win.setMenu(null)
+    hivenClient.loadURL("https://canary.hiven.io");
+    hivenClient.setMenu(null)
 
-    await mainWinStateKeeper.track(win); // Track window size to save it.
+    await mainWinStateKeeper.track(hivenClient); // Track window size to save it.
     // Loading Screen Check and Disable
-    win.webContents.on('did-finish-load', () => {
+    hivenClient.webContents.on('did-finish-load', () => {
         loadingScreen.close();
-        win.show();
+        hivenClient.show();
     })
 
 
     // Invite Link Check
-    win.webContents.on('new-window', async function (e, url) {
+    hivenClient.webContents.on('new-window', async function (e, url) {
         e.preventDefault();
         if (url.includes('hiven.house/') || url.includes('hiven.io/invites/')) {
-            let key = await win.webContents.executeJavaScript("localStorage.getItem('hiven-auth')", true);
+            let key = await hivenClient.webContents.executeJavaScript("localStorage.getItem('hiven-auth')", true);
             let link = `https://api.hiven.io/v1/invites/${url.split("/").pop()}`;
             await request.get(link, (a, b, c) => {
                 let house_id = JSON.parse(c).data.house.id
@@ -88,7 +89,7 @@ async function createHivenClient() {
                     },
                     method: 'POST'
                 }, (e, r, body) => {
-                    return win.loadURL(`https://canary.hiven.io/houses/${house_id}`)
+                        return hivenClient.loadURL(`https://canary.hiven.io/houses/${house_id}`)
                 })
             })
             return;
@@ -130,7 +131,8 @@ ipcMain.on("nativeLinkCommand", (_, name) => {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    autoUpdater.checkForUpdates()
+    // autoUpdater.checkForUpdates()
+    createHivenClient();
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
     });
