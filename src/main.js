@@ -1,14 +1,9 @@
 const { BrowserWindow, app, dialog, ipcMain } = require("electron");
 const path = require("path");
-const debug = require('electron-debug');
-const appConfig = require('electron-settings');
 const request = require('request')
 const {autoUpdater} = require("electron-updater");
-debug({ showDevTools: false, isEnabled: true });
 
 const winStateKeeper = require("./scripts/windowStateKeeper")
-
-// app.disableHardwareAcceleration(); // Users were experiencing some freezes due to gpu rendering requiring more resources to run. 
 
 // Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
@@ -42,21 +37,23 @@ async function createHivenClient() {
     hivenClient = new BrowserWindow({
         width: winState.width,
         height: winState.height,
+        minHeight: 400,
+        minWidth: 400,
         center: true,
         resizable: true,
-        darkTheme: true,
         frame: false,
         show: false,
         webPreferences: {
             devTools: true,
             enableRemoteModule:true,
-            nodeIntegration: true
+            nodeIntegration: true,
+            preload: path.join(__dirname, '/scripts/pgdmp.js')
         }
     });
 
     winState.isMaximized ? hivenClient.maximize() : null;
+    
     // ScreenShare Feature
-    hivenClient.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
     hivenClient.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
         return true
     })
@@ -66,10 +63,10 @@ async function createHivenClient() {
 
     // Loading Hiven
     hivenClient.loadURL("https://canary.hiven.io");
-    hivenClient.setMenu(null)
 
     await mainWinStateKeeper.track(hivenClient); // Track window size to save it.
-    // Loading Screen Check and Disable
+    
+    // LoadingScreen Check and Disable
     hivenClient.webContents.on('did-finish-load', () => {
         loadingScreen.close();
         hivenClient.show();
@@ -133,8 +130,7 @@ ipcMain.on("nativeLinkCommand", (_, name) => {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    // autoUpdater.checkForUpdates()
-    createHivenClient();
+    autoUpdater.checkForUpdates()
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
     });
