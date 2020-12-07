@@ -8,7 +8,7 @@ debug({ showDevTools: false, isEnabled: true });
 
 const winStateKeeper = require("./scripts/windowStateKeeper")
 
-app.disableHardwareAcceleration(); // Users were experiencing some freezes due to gpu rendering requiring more resources to run. 
+// app.disableHardwareAcceleration(); // Users were experiencing some freezes due to gpu rendering requiring more resources to run. 
 
 // Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
@@ -53,6 +53,8 @@ async function createHivenClient() {
             nodeIntegration: true
         }
     });
+
+    winState.isMaximized ? hivenClient.maximize() : null;
     // ScreenShare Feature
     hivenClient.webContents.session.setPreloads([path.join(__dirname, '/scripts/pgdmp.js')])
     hivenClient.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
