@@ -1,6 +1,5 @@
-const { BrowserWindow, app, dialog, ipcMain } = require("electron");
+const { BrowserWindow, app, dialog } = require("electron");
 const path = require("path");
-const request = require('request')
 const {autoUpdater} = require("electron-updater");
 
 const winStateKeeper = require("./scripts/windowStateKeeper")
@@ -34,9 +33,9 @@ function createLoadingScreen() {
 }
 
 
-async function createHivenClient() {
+function createHivenClient() {
     let mainWinStateKeeper = new winStateKeeper("main"); // Loads windows size and place from the electron-settings.
-    let winState = await mainWinStateKeeper.bounds() // Gets the bound data
+    let winState = mainWinStateKeeper.bounds() // Gets the bound data
     hivenClient = new BrowserWindow({
         width: winState.width,
         height: winState.height,
@@ -53,8 +52,6 @@ async function createHivenClient() {
             preload: path.join(__dirname, '/scripts/pgdmp.js')
         }
     });
-
-    winState.isMaximized ? hivenClient.maximize() : null;
     
     // ScreenShare Feature
     hivenClient.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
@@ -67,11 +64,12 @@ async function createHivenClient() {
     // Loading Hiven
     hivenClient.loadURL("https://canary.hiven.io");
 
-    await mainWinStateKeeper.track(hivenClient); // Track window size to save it.
+    mainWinStateKeeper.track(hivenClient); // Track window size to save it.
     
     // LoadingScreen Check and Disable
     hivenClient.webContents.on('did-finish-load', () => {
         loadingScreen.close();
+        winState.isMaximized ? hivenClient.maximize() : null;
         hivenClient.show();
     })
 
@@ -82,6 +80,7 @@ async function createHivenClient() {
         if (url.includes('hiven.house/') || url.includes('hiven.io/invites/')) {
             let key = await hivenClient.webContents.executeJavaScript("localStorage.getItem('hiven-auth')", true);
             let link = `https://api.hiven.io/v1/invites/${url.split("/").pop()}`;
+            let request = require('request');
             await request.get(link, (a, b, c) => {
                 let house_id = JSON.parse(c).data.house.id
                 request.post({
@@ -113,8 +112,8 @@ autoUpdater.on('update-downloaded', (info) => {
     loadingScreen.webContents.executeJavaScript(`updateText('Installing version ${info.version}')`);
     autoUpdater.quitAndInstall();
 })
-
-ipcMain.on("nativeLinkCommand", (_, name) => {
+    
+require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
     switch (name) {
         case "close":
             hivenClient.close();

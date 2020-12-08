@@ -8,26 +8,26 @@ class WindowStateKeeper {
         this.winState = undefined;
     }
     
-    async setBounds() {
-        this.winState = (await appConfig.has(`winState.${this.winName}`)) ? await appConfig.get(`winState.${this.winName}`) : { center: true, height: 720, width: 1280 }
+    setBounds() {
+        this.winState = (appConfig.hasSync(`winState.${this.winName}`)) ? appConfig.getSync(`winState.${this.winName}`) : { center: true, height: 720, width: 1280 }
     }
     
-    async saveState() {
+    saveState() {
         if (!this.winState.isMaximized) {
             this.winState = this.win.getBounds();
         }
         this.winState.isMaximized = this.win.isMaximized();
-        await appConfig.set(`winState.${this.winName}`, this.winState);
+        appConfig.set(`winState.${this.winName}`, this.winState);
     }
     
-    async track(window) {
+    track(window) {
         this.win = window;
         ['resize', 'move', 'close'].forEach(event => {
             window.on(event, () => this.saveState());
         });
     }
-    async bounds() {
-        await this.setBounds();
+    bounds() {
+        this.setBounds();
         return ({
             x: this.winState.x,
             y: this.winState.y,
