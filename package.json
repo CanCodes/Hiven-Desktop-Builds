@@ -26,6 +26,7 @@
     "url": "https://github.com/CanCodes/Hiven-Dekstop-Builds"
   },
   "build": {
+    "files": ["src/**/**"],
     "linux": {
       "target": [
         "AppImage"

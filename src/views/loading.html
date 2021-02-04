@@ -160,10 +160,7 @@
             progressBar.style.width = `${progressBar.getAttribute('data-percent')}%`;
             progressBar.style.opacity = 1;
             if (data === 100) {
-                setTimeout(() => {
-                    document.getElementById('update-text').innerText = 'Starting client...';
-                    progressContainer.style.height = '0px'
-                }, 1400);
+                document.getElementById('update-text').innerText = 'Starting client...';
             }
         }
     }
