@@ -1,6 +1,6 @@
 const { BrowserWindow, app, dialog } = require("electron");
 const path = require("path");
-const {autoUpdater} = require("electron-updater");
+const { autoUpdater } = require("electron-updater");
 
 const winStateKeeper = require("./scripts/windowStateKeeper")
 
@@ -39,20 +39,20 @@ function createHivenClient() {
     hivenClient = new BrowserWindow({
         width: winState.width,
         height: winState.height,
-        minHeight: 400,
-        minWidth: 400,
+        minHeight: 600,
+        minWidth: 980,
         center: true,
         resizable: true,
         frame: false,
         show: false,
         webPreferences: {
             devTools: true,
-            enableRemoteModule:true,
+            enableRemoteModule: true,
             nodeIntegration: true,
             preload: path.join(__dirname, '/scripts/pgdmp.js')
         }
     });
-    
+
     // ScreenShare Feature
     hivenClient.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
         return true
@@ -65,7 +65,7 @@ function createHivenClient() {
     hivenClient.loadURL("https://canary.hiven.io");
 
     mainWinStateKeeper.track(hivenClient); // Track window size to save it.
-    
+
     // LoadingScreen Check and Disable
     hivenClient.webContents.on('did-finish-load', () => {
         loadingScreen.close();
@@ -90,7 +90,7 @@ function createHivenClient() {
                     },
                     method: 'POST'
                 }, (e, r, body) => {
-                        return hivenClient.loadURL(`https://canary.hiven.io/houses/${house_id}`)
+                    return hivenClient.loadURL(`https://canary.hiven.io/houses/${house_id}`)
                 })
             })
             return;
@@ -112,7 +112,7 @@ autoUpdater.on('update-downloaded', (info) => {
     loadingScreen.webContents.executeJavaScript(`updateText('Installing version ${info.version}')`);
     autoUpdater.quitAndInstall();
 })
-    
+
 require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
     switch (name) {
         case "close":
@@ -132,7 +132,8 @@ require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    autoUpdater.checkForUpdates();
+    /* autoUpdater.checkForUpdates(); */
+    createHivenClient();
     if (process.platform === "win32") app.setAppUserModelId("Hiven Canary");
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
