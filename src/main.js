@@ -105,7 +105,7 @@ autoUpdater.on('update-not-available', (info) => {
 })
 
 autoUpdater.on('download-progress', (progress) => {
-    loadingScreen.webContents.executeJavaScript(`updateText('Downloaded ${Math.floor(progress.percent)}%')`)
+    loadingScreen.webContents.executeJavaScript(Math.floor(progress.percent))
 })
 
 autoUpdater.on('update-downloaded', (info) => {
