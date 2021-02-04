@@ -132,8 +132,7 @@ require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    /* autoUpdater.checkForUpdates(); */
-/*     createHivenClient() */
+    autoUpdater.checkForUpdates();
     if (process.platform === "win32") app.setAppUserModelId("Hiven Canary");
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
