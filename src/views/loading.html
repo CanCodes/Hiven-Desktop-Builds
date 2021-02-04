@@ -1,52 +1,123 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Loading Screen</title>
+    <style>
+        @font-face {
+            font-family: "Whitney";
+            src: url("../assets//Whitney-Book.woff2")
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-app-region: drag;
+            background-color: #242424;
+            color: #fff;
+            font-family: "Whitney";
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        .logo {
+            position: absolute;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            animation: logoContainerFrames 0.5s ease 0.75s;
+            animation-fill-mode: forwards;
+            /* margin-bottom: 20px; */
+        }
+
+        .cubelogo {
+            height: 100px;
+            width: 100px;
+            animation: cubeLogoFrames 1s ease;
+            animation-fill-mode: forwards;
+            z-index: 1;
+        }
+
+        .textlogo {
+            width: 80px;
+            animation: textFrames 1s ease;
+            animation-fill-mode: forwards;
+        }
+
+        .statusText {
+            margin: 0;
+            margin-top: 10px;
+            opacity: 0;
+            animation: statusText 1s ease 0.75s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes statusText {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(50px);
+            }
+        }
+
+        @keyframes logoContainerFrames {
+            to {
+                transform: translateY(-25px);
+            }
+        }
+
+        @keyframes cubeLogoFrames {
+            0% {
+                transform: translateX(100px) scale(1.5);
+            }
+
+            50% {
+                transform: translateX(100px) scale(0.5);
+            }
+
+            to {
+                transform: translateX(55px) scale(0.6);
+            }
+        }
+
+        @keyframes textFrames {
+            0% {
+                opacity: 0;
+                transform: translateX(-25px);
+            }
+
+            50% {
+                opacity: 0;
+                transform: scale(0.5), translateX(-25px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(45px);
+            }
+        }
+    </style>
 </head>
-<style>
-    * {
-        color: white;
-        overflow-y:hidden;
-        font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        -webkit-app-region: drag;
-    }
-    body {
-        background-color: #242424;
-    }
-    .center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 300px;
-    }
-    #update-text {
-        text-align: center;
-    }
-    @keyframes logoanim {
-        from {width: 56px; height: 56px;}
-        to {width: 64px; height: 64px;}
-    }
-    .logo {
-        animation-name: logoanim;
-        animation-duration: 1s;
-        animation-delay: 0.5s;
-        animation-direction: alternate;
-        animation-iteration-count: infinite;
-        image-rendering: crisp-edges;
-    }
-</style>
 
 <body>
-    <div class="center">
-        <img class="logo" src="https://canary.hiven.io/static/media/logo.f7ff647e.svg">
+    <div class="logo">
+        <img class="cubelogo" src="../assets/house.svg" />
+        <img class="textlogo" src="../assets/text.svg" />
     </div>
-    <h4 id="update-text">Checking for Updates...</h4>
+    <h4 id="update-text" class="statusText">Checking for Updates...</h4>
 </body>
-<script> 
+<script>
     function updateText(text) {
         document.getElementById('update-text').innerText = text;
     }
 </script>
+
 </html>
