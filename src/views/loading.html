@@ -57,6 +57,33 @@
             animation-fill-mode: forwards;
         }
 
+        .progress {
+            position: relative;
+            display: none;
+            margin-top: 25px;
+            background-color: #7c7c7c;
+            width: 200px;
+            height: 5px;
+            border-radius: 12px;
+            opacity: 0;
+            transition: height .3s;
+            /* This is for getting rid of it when hitting %100 */
+            animation: statusText .8s ease 0.95s;
+            animation-fill-mode: forwards;
+        }
+
+        .progressbar {
+            background: #dce1fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 0;
+            opacity: 0;
+            border-radius: 12px;
+            transition: 1s ease 0.3s;
+        }
+
         @keyframes statusText {
             from {
                 opacity: 0
@@ -113,10 +140,32 @@
         <img class="textlogo" src="../assets/text.svg" />
     </div>
     <h4 id="update-text" class="statusText">Checking for Updates...</h4>
+    <div class="progress">
+        <div class="progressbar" data-percent="0"></div>
+    </div>
 </body>
 <script>
-    function updateText(text) {
-        document.getElementById('update-text').innerText = text;
+    function updateText(data) {
+        // Check if Electron is sending a string or a number, if it finds a number, go to else
+        if (typeof (data) == 'string') {
+            document.getElementById('update-text').innerText = data;
+        } else {
+            // Wrapper
+            const progressContainer = document.querySelector('.progress');
+            // The actual mover mover thing
+            const progressBar = document.querySelector('.progressbar');
+            document.getElementById('update-text').innerText = 'Downloading update...';
+            progressContainer.style.display = 'unset';
+            progressBar.setAttribute('data-percent', data)
+            progressBar.style.width = `${progressBar.getAttribute('data-percent')}%`;
+            progressBar.style.opacity = 1;
+            if (data === 100) {
+                setTimeout(() => {
+                    document.getElementById('update-text').innerText = 'Starting client...';
+                    progressContainer.style.height = '0px'
+                }, 1400);
+            }
+        }
     }
 </script>
 
