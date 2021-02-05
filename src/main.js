@@ -138,9 +138,7 @@ if (!instanceLock) {
 } else {
     app.on('second-instance', (e, cL, wD) => {
         if (hivenClient) {
-            if (hivenClient.isMinimized()) {
-                hivenClient.restore()
-            }
+            hivenClient.show();
             hivenClient.focus();
         }
     })
@@ -149,8 +147,7 @@ if (!instanceLock) {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    // autoUpdater.checkForUpdates();
-    createHivenClient();
+    autoUpdater.checkForUpdates();
     if  (process.platform === "win32") app.setAppUserModelId("Hiven Canary");
     
     // TODO Remove Tray from here to another file to 
