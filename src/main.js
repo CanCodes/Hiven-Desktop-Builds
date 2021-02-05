@@ -4,6 +4,9 @@ const { autoUpdater } = require("electron-updater");
 
 const winStateKeeper = require("./scripts/windowStateKeeper")
 
+// We need this to check if user is trying to open another instance ~DEVLOOSKIE
+const instanceLock = app.requestSingleInstanceLock();
+
 // Disables errors dialogs on production. Check console to Debug.
 dialog.showErrorBox = function (title, content) {
     console.log(`${title}\n${content}`);
@@ -128,6 +131,20 @@ require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
             break;
     }
 });
+
+// Check if user already has an instance open.
+if (!instanceLock) {
+    app.quit();
+} else {
+    app.on('second-instance', (e, cL, wD) => {
+        if (hivenClient) {
+            if (hivenClient.isMinimized()) {
+                hivenClient.restore()
+            }
+            hivenClient.focus();
+        }
+    })
+}
 
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
