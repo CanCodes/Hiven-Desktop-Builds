@@ -1,4 +1,4 @@
-const { BrowserWindow, app, dialog } = require("electron");
+const { BrowserWindow, app, dialog, Tray, Menu } = require("electron");
 const path = require("path");
 const { autoUpdater } = require("electron-updater");
 
@@ -119,11 +119,11 @@ autoUpdater.on('update-downloaded', (info) => {
 require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
     switch (name) {
         case "close":
-            hivenClient.close();
+            hivenClient.hide();
             break;
 
         case "minimize":
-            hivenClient.minimize();
+            hivenClient.hide();
             break;
 
         case "maximize":
@@ -149,8 +149,25 @@ if (!instanceLock) {
 // First, create the loading screen and then the hiven client.
 app.on("ready", () => {
     createLoadingScreen();
-    autoUpdater.checkForUpdates();
-    if (process.platform === "win32") app.setAppUserModelId("Hiven Canary");
+    // autoUpdater.checkForUpdates();
+    createHivenClient();
+    if  (process.platform === "win32") app.setAppUserModelId("Hiven Canary");
+    
+    // TODO Remove Tray from here to another file to 
+    let tray = new Tray(require("path").join(__dirname + '/assets/256x256.png'));
+    const contextMenu = Menu.buildFromTemplate([
+        { label: 'Hiven Canary', enabled: false},
+        { type: "separator" },
+        { label: "Exit App", click: () => { app.quit() } },
+    ])
+    tray.setToolTip('Hiven Canary')
+    tray.setContextMenu(contextMenu)
+
+    tray.on("click" || "double-click", () => {
+        hivenClient.show();
+        hivenClient.focus();
+    })
+
     app.on("activate", function () {
         if (BrowserWindow.getAllWindows().length === 0) createHivenClient();
     });
