@@ -134,14 +134,14 @@ require("electron").ipcMain.on("nativeLinkCommand", (_, name) => {
 
 // Check if user already has an instance open.
 if (!instanceLock) {
-  app.quit();
+    app.quit();
 } else {
-  app.on("second-instance", (e, cL, wD) => {
-    if (hivenClient) {
-      hivenClient.show();
-      hivenClient.focus();
-    }
-  });
+    app.on('second-instance', (e, cL, wD) => {
+        if (hivenClient) {
+            hivenClient.show();
+            hivenClient.focus();
+        }
+    })
 }
 
 // First, create the loading screen and then the hiven client.
