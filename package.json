@@ -26,7 +26,9 @@
     "url": "https://github.com/CanCodes/Hiven-Dekstop-Builds"
   },
   "build": {
-    "files": ["src/**/**"],
+    "files": [
+      "src/**/**"
+    ],
     "linux": {
       "target": [
         "AppImage"
@@ -46,6 +48,7 @@
   "dependencies": {
     "electron-settings": "^4.0.2",
     "electron-updater": "^4.3.5",
+    "localforage": "^1.9.0",
     "request": "^2.88.2"
   },
   "publish": {
