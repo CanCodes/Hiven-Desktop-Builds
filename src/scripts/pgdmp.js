@@ -1,5 +1,6 @@
-const { ipcRenderer, app } = require("electron");
-const localforage = require("localforage");
+const { ipcRenderer } = require("electron");
+const localforage = require('localforage');
+
 window["ipc"] = ipcRenderer;
 
 const { desktopCapturer } = require("electron");
